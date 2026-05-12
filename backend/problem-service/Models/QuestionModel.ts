@@ -1,38 +1,46 @@
-import mongoose, { Schema, Document } from "mongoose";
 
 
-export interface IQuestion extends Document {
-  items: {
-    Title: string;
-    Difficulty: string;
-    Editorial: string;
-    Testcases: {
-      Input: string;
-      Output: string;
-      Explanation: string;
-    }[];
-  }[];
+import mongoose, { Schema, Document, Types } from "mongoose";
+
+export interface IProblem extends Document {
+  title: string;
+  difficulty: string;
+  description: string;
+  editorial: string;
+
+  testcases: Types.ObjectId[];
 }
 
+const ProblemSchema = new Schema<IProblem>({
+  title: {
+    type: String,
+    required: true,
+  },
 
-const QuestionSchema = new Schema<IQuestion>({
-  items: [
+  difficulty: {
+    type: String,
+    required: true,
+  },
+
+  description: {
+    type: String,
+    required: true,
+  },
+
+  editorial: {
+    type: String,
+    required: true,
+  },
+
+  testcases: [
     {
-      Title: { type: String, required: true },
-      Difficulty: { type: String, required: true },
-      Editorial: { type: String, required: true },
-      Testcases: [
-        {
-          Input: { type: String, required: true },
-          Output: { type: String, required: true },
-          Explanation: { type: String, required: true }
-        }
-      ]
-    }
-  ]
+      type: Schema.Types.ObjectId,
+      ref: "TestCase",
+    },
+  ],
 });
 
-
-const Question = mongoose.model<IQuestion>("Question", QuestionSchema);
-
-export default Question;
+export default mongoose.model<IProblem>(
+  "Problem",
+  ProblemSchema
+);

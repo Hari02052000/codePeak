@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/Question", router);
+app.use("/question", router);
 
 const Mongourl = process.env.MONGO_URL as string;
 
