@@ -2,17 +2,20 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import problemRoutes from "./Routes/ProblemRoute";
 
-import router from "./Routes/QuestionRoute";
 
 dotenv.config({ path: "./keys.env" });
 
+
+
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
+app.use(problemRoutes);
 
-app.use("/question", router);
 
 const Mongourl = process.env.MONGO_URL as string;
 
