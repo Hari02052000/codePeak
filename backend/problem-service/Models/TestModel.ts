@@ -23,7 +23,7 @@ const TestCaseSchema = new Schema<ITestCase>({
 
   questionId: {
     type: Schema.Types.ObjectId,
-    ref: "Question",      
+    ref: "Problem",      
     required: true,       
   },
 });

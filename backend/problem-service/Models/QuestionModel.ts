@@ -8,7 +8,7 @@ export interface IProblem extends Document {
   description: string;
   editorial: string;
 
-  testcases: Types.ObjectId[];
+  
 }
 
 const ProblemSchema = new Schema<IProblem>({
@@ -32,12 +32,6 @@ const ProblemSchema = new Schema<IProblem>({
     required: true,
   },
 
-  testcases: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "TestCase",
-    },
-  ],
 });
 
 export default mongoose.model<IProblem>(

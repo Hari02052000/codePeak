@@ -9,79 +9,59 @@ export const getQuestions = async (req: Request, res: Response) => {
 };
 
 
-export const createQuestion = async (req: Request, res: Response) => {
-
-  const session = await mongoose.startSession();
-
+export const createQuestion = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const data = req.body;
 
+    // Validate exactly 3 testcases
     if (!data.testcases || data.testcases.length !== 3) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Exactly 3 testcases are required!",
       });
-      return;  
     }
 
-    session.startTransaction();
-
-
-    const newQuestion = new Question({
+    // Create Question
+    const newQuestion = await Question.create({
       title: data.title,
       difficulty: data.difficulty,
       description: data.description,
       editorial: data.editorial,
-      testcases: [],  
     });
 
-
-    await newQuestion.save({ session });
-
-    const savedTestCases = await Promise.all(
+    // Save test cases
+    await Promise.all(
       data.testcases.map(
         async (testcase: {
           input: string;
           output: string;
-          explanation: string;
+          explanation?: string;
         }) => {
-          const newTestCase = new TestCase({
+          await TestCase.create({
             input: testcase.input,
             output: testcase.output,
             explanation: testcase.explanation,
-            questionId: newQuestion._id,  
+            questionId: newQuestion._id,
           });
-
-          return await newTestCase.save({ session });
         }
       )
     );
 
-    const testcaseIds: mongoose.Types.ObjectId[] =
-      savedTestCases.map((tc) => tc._id);
-
-    newQuestion.testcases = testcaseIds;
-    await newQuestion.save({ session });  
-
-    await session.commitTransaction();
-
-    res.status(201).json(newQuestion);
-
+    res.status(201).json({
+      message: "Question created successfully",
+      question: newQuestion,
+    });
   } catch (error) {
-
-
-    await session.abortTransaction();
+    console.log(error);
 
     res.status(500).json({
-      message: "Error creating question — nothing was saved!",
+      message: "Error creating question",
       error,
     });
-
-  } finally {
-
-    session.endSession();
   }
 };
-
 
 export const getQuestionById = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -102,6 +82,6 @@ export const FilterQuestionByDifficulty = async (
   res: Response
 ) => {
   const { difficulty } = req.params;
-  const questions = await Question.find({ Difficulty: difficulty });
+  const questions = await Question.find({ difficulty: difficulty });
   res.send(questions);
 };
