@@ -7,6 +7,7 @@ export interface IProblem extends Document {
   difficulty: string;
   description: string;
   editorial: string;
+  
 
   testcases: Types.ObjectId[];
 }
