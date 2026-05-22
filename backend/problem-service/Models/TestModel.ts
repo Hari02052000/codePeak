@@ -1,0 +1,31 @@
+import mongoose, { Schema, Document, Types } from "mongoose";
+
+export interface ITestCase extends Document {
+  input: string;
+  output: string;
+  explanation?: string;
+  problemId: Types.ObjectId; 
+}
+
+const TestCaseSchema = new Schema<ITestCase>({
+  input: {
+    type: String,
+    required: true,
+  },
+  output: {
+    type: String,
+    required: true,
+  },
+  explanation: {
+    type: String,
+  },
+
+
+  problemId: {
+    type: Schema.Types.ObjectId,
+    ref: "Problem",      
+    required: true,       
+  },
+});
+
+export default mongoose.model<ITestCase>("TestCase", TestCaseSchema);
