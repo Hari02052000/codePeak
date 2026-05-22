@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import problemRoutes from "./Routes/ProblemRoute";
 
-dotenv.config({ path: "./keys.env" });
+dotenv.config();
 
 const app = express();
 
@@ -13,13 +13,18 @@ app.use(express.json());
 
 app.use("/problems", problemRoutes);
 
-const Mongourl = "mongodb://localhost:27017/codePeak";
+const PORT = process.env.PORT || 5002;
+const MONGO_URL = process.env.MONGO_URL;
 
-const PORT = 5002;
+if (!MONGO_URL) {
+  console.error("MONGO_URL is not defined in env");
+  process.exit(1);
+}
+  
 
 const startServer = async () => {
   try {
-    await mongoose.connect(Mongourl);
+    await mongoose.connect(MONGO_URL);
 
     console.log("MongoDB Connected");
 

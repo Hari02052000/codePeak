@@ -1,87 +1,81 @@
 import { Request, Response } from "express";
-import Question from "../Models/QuestionModel";
+import Problem from "../Models/ProblemModel";
 import TestCase from "../Models/TestModel";
 import mongoose from "mongoose";
 
-export const getQuestions = async (req: Request, res: Response) => {
-  const Questions = await Question.find();
-  res.send(Questions);
+export const getProblems = async (req: Request, res: Response) => {
+  const Problems = await Problem.find();
+  res.send(Problems);
 };
 
 
-export const createQuestion = async (
+export const createProblem = async (
   req: Request,
   res: Response
 ) => {
+    // const session = await mongoose.startSession();
+
   try {
-    const data = req.body;
+    // session.startTransaction();
 
-    // Validate exactly 3 testcases
-    if (!data.testcases || data.testcases.length !== 3) {
-      return res.status(400).json({
-        message: "Exactly 3 testcases are required!",
-      });
-    }
+    const { title, difficulty, description, editorial, testCases } = req.body;
 
-    // Create Question
-    const newQuestion = await Question.create({
-      title: data.title,
-      difficulty: data.difficulty,
-      description: data.description,
-      editorial: data.editorial,
-    });
-
-    // Save test cases
-    await Promise.all(
-      data.testcases.map(
-        async (testcase: {
-          input: string;
-          output: string;
-          explanation?: string;
-        }) => {
-          await TestCase.create({
-            input: testcase.input,
-            output: testcase.output,
-            explanation: testcase.explanation,
-            questionId: newQuestion._id,
-          });
-        }
-      )
+    // 1. Create Problem
+    const problem = await Problem.create(
+      [
+        {
+          title,
+          difficulty,
+          description,
+          editorial,
+        },
+      ]
+     // { session }
     );
 
-    res.status(201).json({
-      message: "Question created successfully",
-      question: newQuestion,
+    const createdProblem = problem[0];
+
+    // 2. Attach problemId to test cases
+    const testCaseDocs = testCases.map((tc: any) => ({
+      input: tc.input,
+      output: tc.output,
+      explanation: tc.explanation,
+      problemId: createdProblem._id,
+    }));
+
+    // 3. Insert test cases
+    await TestCase.insertMany(testCaseDocs, 
+     // { session }
+    );
+
+    // 4. Commit transaction
+   // await session.commitTransaction();
+    //session.endSession();
+    return res.status(201).json({
+      message: "Problem created successfully",
+      problem: createdProblem,
     });
   } catch (error) {
-    console.log(error);
+    // rollback if anything fails
+   // await session.abortTransaction();
+   // session.endSession();
 
-    res.status(500).json({
-      message: "Error creating question",
+    return res.status(500).json({
+      message: "Failed to create problem",
       error,
     });
   }
 };
 
-export const getQuestionById = async (req: Request, res: Response) => {
+export const getProblemById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const question = await Question.findById(id);
-  res.send(question);
+  const problem = await Problem.findById(id);
+  res.send(problem);
 };
 
 
-export const deleteQuestionById = async (req: Request, res: Response) => {
+export const deleteProblemById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  await Question.findByIdAndDelete(id);
-  res.send({ message: "Question deleted successfully" });
-};
-
-
-export const FilterQuestionByDifficulty = async (
-  req: Request,
-  res: Response
-) => {
-  const { difficulty } = req.params;
-  const questions = await Question.find({ difficulty: difficulty });
-  res.send(questions);
+  await Problem.findByIdAndDelete(id);
+  res.send({ message: "Problem deleted successfully" });
 };

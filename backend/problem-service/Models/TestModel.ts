@@ -4,7 +4,7 @@ export interface ITestCase extends Document {
   input: string;
   output: string;
   explanation?: string;
-  questionId: Types.ObjectId; 
+  problemId: Types.ObjectId; 
 }
 
 const TestCaseSchema = new Schema<ITestCase>({
@@ -21,7 +21,7 @@ const TestCaseSchema = new Schema<ITestCase>({
   },
 
 
-  questionId: {
+  problemId: {
     type: Schema.Types.ObjectId,
     ref: "Problem",      
     required: true,       

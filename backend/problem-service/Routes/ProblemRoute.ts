@@ -1,14 +1,12 @@
 
 import express from "express";
-import {createQuestion,
-  getQuestions,
-  getQuestionById
-} from "../Controllers/problemcontroller";
+import {getProblems, createProblem, deleteProblemById, getProblemById,    
+} from "../Controllers/problemcontroller";    
 
 const router = express.Router();
 
-router.post("/", createQuestion);
-router.get("/", getQuestions);
-router.get("/:id", getQuestionById);
+router.post("/", createProblem);
+router.get("/", getProblems); 
+router.get("/:id", getProblemById);
 
 export default router;
