@@ -4,8 +4,34 @@ import TestCase from "../Models/TestModel";
 import mongoose from "mongoose";
 
 export const getProblems = async (req: Request, res: Response) => {
-  const Problems = await Problem.find();
-  res.send(Problems);
+    interface QueryType {
+    questiontype?: string;
+    difficulty?: string;
+    search?: string;
+  }
+
+  const query = req.query as QueryType;
+
+  let filter: any = {};
+
+  if (query.search) {
+    filter.title = {
+      $regex: query.search,
+      $options: "i"
+    };
+  }
+
+  if (query.difficulty) {
+    filter.difficulty = query.difficulty  ;
+  }
+   if (query.questiontype) {
+    filter.questiontype = query.questiontype  ;
+  }
+
+  const problem  = await Problem.find(filter);
+
+  
+  res.send(problem);
 };
 
 
@@ -18,7 +44,7 @@ export const createProblem = async (
   try {
     // session.startTransaction();
 
-    const { title, difficulty, description, editorial, testCases } = req.body;
+    const { title, difficulty, description, editorial, questiontype, testCases } = req.body;
 
     // 1. Create Problem
     const problem = await Problem.create(
@@ -28,6 +54,7 @@ export const createProblem = async (
           difficulty,
           description,
           editorial,
+          questiontype,
         },
       ]
      // { session }

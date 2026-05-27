@@ -7,7 +7,7 @@ export interface IProblem extends Document {
   difficulty: string;
   description: string;
   editorial: string;
-
+questiontype: string;
   
 }
 
@@ -31,6 +31,12 @@ const ProblemSchema = new Schema<IProblem>({
     type: String,
     required: true,
   },
+  
+  questiontype: {
+    type: String,
+    required: true,
+  },
+
 
 });
 
