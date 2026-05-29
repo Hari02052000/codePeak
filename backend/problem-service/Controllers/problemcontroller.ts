@@ -47,7 +47,7 @@ export const createProblem = async (
   try {
     // session.startTransaction();
 let questionNumber= await QuestionNumber.find();
-console.log(questionNumber);
+
 if(questionNumber.length===0){
   await QuestionNumber.create({number:1});
   questionNumber= await QuestionNumber.find();
