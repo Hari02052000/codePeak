@@ -47,7 +47,7 @@ export const createProblem = async (
   try {
     // session.startTransaction();
 let questionNumber= await QuestionNumber.find();
-console.log(questionNumber);
+
 if(questionNumber.length===0){
   await QuestionNumber.create({number:1});
   questionNumber= await QuestionNumber.find();
@@ -74,12 +74,13 @@ const number=questionNumber[0].number;
     const createdProblem = problem[0];
 
     // 2. Attach problemId to test cases
-    const testCaseDocs = testCases.map((tc: any) => ({
-      input: tc.input,
-      output: tc.output,
-      explanation: tc.explanation,
-      problemId: createdProblem._id,
-    }));
+    const testCaseDocs =
+      testCases?.map((tc: any) => ({
+        input: tc.input,
+        output: tc.output,
+        explanation: tc.explanation,
+        problemId: createdProblem._id,
+      })) || [];
 
     // 3. Insert test cases
     await TestCase.insertMany(testCaseDocs, 
