@@ -36,12 +36,13 @@ export const createProblem = async (
     const createdProblem = problem[0];
 
     // 2. Attach problemId to test cases
-    const testCaseDocs = testCases.map((tc: any) => ({
-      input: tc.input,
-      output: tc.output,
-      explanation: tc.explanation,
-      problemId: createdProblem._id,
-    }));
+    const testCaseDocs =
+      testCases?.map((tc: any) => ({
+        input: tc.input,
+        output: tc.output,
+        explanation: tc.explanation,
+        problemId: createdProblem._id,
+      })) || [];
 
     // 3. Insert test cases
     await TestCase.insertMany(testCaseDocs, 
