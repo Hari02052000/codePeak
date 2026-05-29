@@ -3,6 +3,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface IProblem extends Document {
+  questionNumber: number;
   title: string;
   difficulty: string;
   description: string;
@@ -12,6 +13,10 @@ questiontype: string;
 }
 
 const ProblemSchema = new Schema<IProblem>({
+   questionNumber: {
+    type: Number,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
