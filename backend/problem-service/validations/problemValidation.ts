@@ -1,4 +1,5 @@
 import { body, param } from "express-validator";
+import { Difficulty, DataStructureType } from "../Models/ProblemModel";
 
 export const createProblemValidation = [
  
@@ -14,9 +15,9 @@ export const createProblemValidation = [
     .trim()
     .notEmpty()
     .withMessage("Difficulty is required")
-    .isIn(["easy", "medium", "hard"])
+    .isIn(Object.values(Difficulty))
     .withMessage(
-      "Difficulty must be easy, medium or hard"
+      `Difficulty must be one of: ${Object.values(Difficulty).join(", ")}`
     ),
 
   
@@ -29,7 +30,14 @@ export const createProblemValidation = [
       "Description must contain at least 10 characters"
     ),
 
-  
+  body("dataStructureType")
+    .trim()
+    .notEmpty()
+    .withMessage("Data structure type is required")
+    .isIn(Object.values(DataStructureType))
+    .withMessage(
+      `Data structure type must be one of: ${Object.values(DataStructureType).join(", ")}`
+    ),
   body("editorial")
     .trim()
     .notEmpty()

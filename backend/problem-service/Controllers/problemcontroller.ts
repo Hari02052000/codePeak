@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Problem from "../Models/ProblemModel";
 import TestCase from "../Models/TestModel";
 import QuestionNumber from "../Models/QuestionNumber";
-import mongoose from "mongoose";
 
 export const getProblems = async (req: Request, res: Response) => {
     interface QueryType {
@@ -42,36 +41,26 @@ export const createProblem = async (
   req: Request,
   res: Response
 ) => {
-    // const session = await mongoose.startSession();
-
   try {
-    // session.startTransaction();
 let questionNumber= await QuestionNumber.find();
-
 if(questionNumber.length===0){
   await QuestionNumber.create({number:1});
   questionNumber= await QuestionNumber.find();
 }
 const number=questionNumber[0].number;
-    const { title, difficulty, description, editorial, questiontype, testCases } = req.body;
+    const { title, difficulty, description, editorial, dataStructureType, testCases } = req.body;
 
-    // 1. Create Problem
     const problem = await Problem.create(
-      [
         {
           questionNumber: number,
           title,
           difficulty,
           description,
           editorial,
-          questiontype,
+          dataStructureType,
         
         },
-      ]
-     // { session }
-    );
-
-    const createdProblem = problem[0];
+          );
 
     // 2. Attach problemId to test cases
     const testCaseDocs =
@@ -79,29 +68,16 @@ const number=questionNumber[0].number;
         input: tc.input,
         output: tc.output,
         explanation: tc.explanation,
-        problemId: createdProblem._id,
+        problemId: problem._id,
       })) || [];
-
-    // 3. Insert test cases
     await TestCase.insertMany(testCaseDocs, 
-     // { session }
     );
-
-    // 4. Commit transaction
-   // await session.commitTransaction();
-    //session.endSession();
     await QuestionNumber.findByIdAndUpdate(questionNumber[0]._id, { $inc: { number: 1 } }); 
     return res.status(201).json({
       message: "Problem created successfully",
-      problem: createdProblem,
-
+      problem
     });
   } catch (error) {
-    // rollback if anything fails
-   // await session.abortTransaction();
-   // session.endSession();
-   console.log(error);
-
     return res.status(500).json({
       message: "Failed to create problem",
       error,
