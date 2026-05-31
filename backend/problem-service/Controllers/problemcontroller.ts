@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Problem from "../Models/ProblemModel";
 import TestCase from "../Models/TestModel";
 import QuestionNumber from "../Models/QuestionNumber";
+import { ConflictError } from "../utills/error";
 
 export const getProblems = async (req: Request, res: Response) => {
     interface QueryType {
@@ -39,7 +40,8 @@ export const getProblems = async (req: Request, res: Response) => {
 
 export const createProblem = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   try {
 let questionNumber= await QuestionNumber.find();
@@ -49,7 +51,10 @@ if(questionNumber.length===0){
 }
 const number=questionNumber[0].number;
     const { title, difficulty, description, editorial, dataStructureType, testCases } = req.body;
-
+   const existingProblem = await Problem.findOne({ title });
+    if (existingProblem) {
+      throw new ConflictError("A problem with this title already exists");
+    }
     const problem = await Problem.create(
         {
           questionNumber: number,
@@ -78,10 +83,7 @@ const number=questionNumber[0].number;
       problem
     });
   } catch (error) {
-    return res.status(500).json({
-      message: "Failed to create problem",
-      error,
-    });
+    next(error);
   }
 };
 

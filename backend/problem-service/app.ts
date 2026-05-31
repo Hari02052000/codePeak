@@ -2,7 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import problemRoutes from "./Routes/ProblemRoute";
+import { handleError } from "./middleware/ErrorHandler";
+import v1Router from "./Routes/V1Router";
 
 dotenv.config();
 
@@ -11,7 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/problems", problemRoutes);
+app.use("/api/v1", v1Router);
+app.use(handleError);
 
 const PORT = process.env.PORT || 5002;
 const MONGO_URL = process.env.MONGO_URL;

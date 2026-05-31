@@ -39,6 +39,7 @@ const ProblemSchema = new Schema<IProblem>({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
 
   difficulty: {
