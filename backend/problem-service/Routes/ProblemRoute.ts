@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 
 import {getProblems,createProblem,deleteProblemById,getProblemById,} from "../Controllers/problemcontroller";
 
@@ -6,29 +6,29 @@ import { createProblemValidation,problemIdValidation,} from "../validations/prob
 
 import { validate } from "../middleware/validationMiddleware";
 
-const router = express.Router();
+const ProblemRouter = Router();
 
-router.post(
+ProblemRouter.post(
   "/",
   createProblemValidation,
   validate,
   createProblem
 );
 
-router.get("/", getProblems);
+ProblemRouter.get("/", getProblems);
 
-router.get(
+ProblemRouter.get(
   "/:id",
   problemIdValidation,
   validate,
   getProblemById
 );
 
-router.delete(
+ProblemRouter.delete(
   "/:id",
   problemIdValidation,
   validate,
   deleteProblemById
 );
 
-export default router;
+export default ProblemRouter;

@@ -2,14 +2,33 @@
 
 import mongoose, { Schema, Document, Types } from "mongoose";
 
+export enum Difficulty {
+  EASY = "easy",
+  MEDIUM = "medium",
+  HARD = "hard",
+}
+
+export enum DataStructureType {
+  ARRAY = "array",
+  STRING = "string",
+  LINKED_LIST = "linked_list",
+  TREE = "tree",
+  GRAPH = "graph",
+  MATRIX = "matrix",
+  HASH_TABLE = "hash_table",
+  STACK = "stack",
+  QUEUE = "queue",
+  HEAP = "heap",
+}
+
+
 export interface IProblem extends Document {
   questionNumber: number;
   title: string;
-  difficulty: string;
+  difficulty: Difficulty;
   description: string;
   editorial: string;
-questiontype: string;
-  
+ dataStructureType: DataStructureType;  
 }
 
 const ProblemSchema = new Schema<IProblem>({
@@ -20,10 +39,18 @@ const ProblemSchema = new Schema<IProblem>({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
 
   difficulty: {
     type: String,
+    enum : Object.values(Difficulty),
+    required: true,
+  },
+
+  dataStructureType: {
+    type: String,
+    enum: Object.values(DataStructureType),
     required: true,
   },
 
@@ -35,14 +62,7 @@ const ProblemSchema = new Schema<IProblem>({
   editorial: {
     type: String,
     required: true,
-  },
-  
-  questiontype: {
-    type: String,
-    required: true,
-  },
-
-
+  }
 });
 
 export default mongoose.model<IProblem>(
