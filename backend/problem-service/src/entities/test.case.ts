@@ -66,4 +66,9 @@ export class TestCase {
 
     return new TestCase(props);
   }
+  get getProps(){
+    return this.props;
+  }
+
+
 }
