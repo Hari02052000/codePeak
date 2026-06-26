@@ -1,4 +1,4 @@
-import { ProblemType } from "./types/problem";
+import { ProblemType } from "./types/problem.type";
 
 export class Problem {
   private constructor(private props: ProblemType) {}
