@@ -1,0 +1,8 @@
+export type testcasetype={
+      id: string;
+    input: string;
+  output: string;
+  explanation: string;
+  problemId: string;
+
+}
